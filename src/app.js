@@ -6,6 +6,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 
 const authRouter = require('./auth/auth-router');
+const moviesRouter = require('./movies/movies-router');
 
 const { NODE_ENV } = require('./config');
 
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRouter);
+app.use('/api/movies', moviesRouter);
 
 app.use(function errorHandler(error, req, res, next) {
 	let response;
