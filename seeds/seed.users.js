@@ -1,5 +1,9 @@
 require('dotenv').config()
 const bcrypt = require('bcryptjs');
+
+const pg = require('pg'); 
+pg.defaults.ssl = process.env.NODE_ENV === "production";
+
 const knex = require('knex');
 const { PORT, DATABASE_URL, JWT_SECRET } = require('../src/config')
 
