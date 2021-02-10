@@ -25,6 +25,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/movies', moviesRouter);
 
 app.use(function errorHandler(error, req, res, next) {
+	console.error(error);
 	let response;
 	if(NODE_ENV === 'production') {
 		response = { error: { message: 'server error' } };
