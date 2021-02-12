@@ -19,6 +19,7 @@ describe('Test Setup', () => {
     afterEach('clean tables', () => helpers.cleanTables(db));
 
     after('disconnect from db', () => {
+        helpers.cleanTables(db);
         db.destroy();
     })
 
@@ -33,7 +34,7 @@ describe('Test Setup', () => {
         it('Registers a new user successfully', () => {
             const newUser = {
                 user_name: 'TestUser3',
-                full_name: 'Test User 3',
+                full_name: 'Test User 2',
                 password: 'test'
             }
             return supertest(app)
@@ -78,12 +79,13 @@ describe('Test Setup', () => {
     });
 
     describe('Movies Router', () => {
-        beforeEach('seed users', () => {
-            return helpers.seedUsers(db);
-        });
-        
-        beforeEach('seed movies', () => {
-            return helpers.seedMovies(db);
+
+        beforeEach('clean database and seed', () => {
+            return helpers.cleanTables(db).then(() => {
+                return helpers.seedUsers(db).then(() => {
+                    return helpers.seedMovies(db);
+                })
+            });
         });
 
         it('Returns an array of movies from /api/movies', () => {
@@ -102,7 +104,7 @@ describe('Test Setup', () => {
 
         it('Adds a new movie when given valid data', () => {
             const newMovie = {
-                name: 'TestMovie2',
+                name: 'TestMovie4',
                 description: 'A movie for testing',
                 rating: 3,
                 genre: 'Science Fiction'
