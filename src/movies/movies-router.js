@@ -6,6 +6,12 @@ const { json } = require('express');
 const moviesRouter = express.Router();
 const jsonBodyParser = express.json();
 
+/**
+ * Returns the list of movies owned by the current logged in user.
+ * Outcomes:
+ * Given user is logged in and sends proper Authorization: 200, {"movies": [Array of movies]}
+ * Given user is not logged in or fails to send Authorization: 401, Unauthorized
+ */
 moviesRouter.route('/')
   .all(requireAuth)
   .get((req, res, next) => {
@@ -16,6 +22,13 @@ moviesRouter.route('/')
     })
   });
 
+/**
+ * Adds a new movie to the list of the user's owned movies.
+ * Outcomes:
+ * Given valid Authorization and valid movie - 200, {status: 0}
+ * Given valid Authorization and invalid or missing movie - 400, {status: -1, message: `Must include ${key} in request body`} 
+ * Given invalid or missing Authorization - 401, Unauthorized
+ */
 moviesRouter.route('/add')
   .all(requireAuth)
   .all(jsonBodyParser)
@@ -37,6 +50,13 @@ moviesRouter.route('/add')
     });
   });
 
+/**
+ * Updates a movie with an ID of :movieId according to request.
+ * Given valid Authorization, :movieId exists, AND valid movie data - 201
+ * Given valid Authorization, :movieId exists, AND invalid or incomplete movie data - 400, {"message": "Missing ${key} in request body"}
+ * Given valid Authorization AND :movieId does not exist - 404, {"message": "No such movie exists with id :movieId"}
+ * Given invalid Authorization - 401, Unauthorized
+ */
 moviesRouter.route('/:movieId/update')
   .all(requireAuth)
   .all(checkMovieExists)
@@ -66,6 +86,12 @@ moviesRouter.route('/:movieId/update')
     });
   });
 
+/**
+ * Deletes a movie with an ID of :movieId.
+ * Given valid Authorization AND movieId exists - 201
+ * Given valid Authorization AND movieId does not exist - 404, {"message": "No such movie exists with id ${movieId}"}
+ * Given invalid Authorization - 401, Unauthorized
+ */
 moviesRouter.route('/:movieId/delete')
   .all(requireAuth)
   .all(checkMovieExists)

@@ -6,6 +6,13 @@ const bcrypt = require('bcryptjs');
 const authRouter = express.Router()
 const jsonBodyParser = express.json()
 
+/**
+ * Processes login information.
+ * Outcomes:
+ * Given all required correct data - 200, auth token.
+ * Given incorrect username OR password - 400, 'Incorrect user_name or password.'
+ * Missing either user_name OR password - 400, 'Missing ${key} in request body.'
+ */
 authRouter
   .post('/login', jsonBodyParser, (req, res, next) => {
     const { user_name, password } = req.body
@@ -44,6 +51,13 @@ authRouter
       .catch(next)
   })
 
+/**
+ * Processes registration information.
+ * Outcomes:
+ * Given all valid required data - 200, {"status": 0, "message": "Ok"}
+ * Given already registered username - 400, {"status": -1, "message": "Username already registered"}
+ * Missing user_name, full_name, OR password - 400, {"status": -1, "message": "Missing ${key} in request body"}
+ */
 authRouter.post('/register', jsonBodyParser, (req, res, next) => {
   const { user_name, full_name, password } = req.body
   const newUser = {
@@ -70,6 +84,11 @@ authRouter.post('/register', jsonBodyParser, (req, res, next) => {
     })
 })
 
+/**
+ * Refreshes an existing auth token.
+ * Outcomes:
+ * Given user is currently logged in - 200, {"authToken": Valid refreshed JWT Auth token}
+ */
 authRouter.post('/refresh', requireAuth, (req, res) => {
   const sub = req.user.user_name
   const payload = { user_id: req.user.id }
